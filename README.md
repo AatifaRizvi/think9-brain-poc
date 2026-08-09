@@ -1,105 +1,42 @@
-# 🧠 Think9 Brain
-
-### **The Institutional Memory Layer for Multi-Brand Organizations**
-
-> **What if your organization could remember every decision — and automatically catch when its own policies stop agreeing?**
+# Think9 Brain
+### The Institutional Memory Layer for Multi-Brand Organizations
 
 **Think9 AI & Intelligence Challenge · Track 3 — Decision Velocity & Institutional Memory**
 
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue)](#) [![FastAPI](https://img.shields.io/badge/FastAPI-Backend-009688)](#) [![RAG](https://img.shields.io/badge/RAG-Enabled-purple)](#) [![Status](https://img.shields.io/badge/Status-Prototype-success)](#)
 
----
-
-## ⚡ The Idea
-
-As Think9 scales across **30+ brands**, institutional knowledge becomes fragmented across:
-
-`SOPs` · `Contracts` · `Policies` · `Meeting Notes` · `Vendor Agreements` · `Past Decisions`
-
-Traditional RAG answers:
-
-> **"What does this document say?"**
-
-Think9 Brain answers something more valuable:
-
-> **"What did we decide, does everything still agree, and is there anything we should worry about?"**
-
-### From Reactive Search → Proactive Intelligence
-
-```text
-                 ┌──────────────────────┐
-                 │  Organizational      │
-                 │      Knowledge       │
-                 └──────────┬───────────┘
-                            ↓
-                 ┌──────────────────────┐
-                 │   Think9 Brain 🧠    │
-                 └──────────┬───────────┘
-                            ↓
-              ┌─────────────┼─────────────┐
-              ↓             ↓             ↓
-         🔎 Retrieve    🧩 Verify     🚨 Detect
-         knowledge     policies      conflicts
-              │             │             │
-              └─────────────┼─────────────┘
-                            ↓
-                 📊 Risk + Confidence
-                            ↓
-                    🧑‍⚖️ Human Review
-```
+**🎥 Demo:** *[add link before submission]*
 
 ---
 
-# 🚨 The Problem
-
-Multi-brand organizations face two expensive knowledge failures.
-
-### Fragmented Memory
-
-> *"What did we decide about this?"*
-
-The answer may be buried inside a meeting note, old policy, or someone's memory.
-
-### Silent Contradictions
-
-A group policy can require **15-day returns**, while a brand policy says **7 days**.
-
-Both documents exist.
-
-Both are retrievable.
-
-**But traditional search doesn't automatically tell you that they conflict.**
+As Think9 scales past 30+ brands, a quiet problem builds up: nobody can say for certain what the organization has actually decided, or whether those decisions still agree with each other. Think9 Brain is our attempt at fixing that — a system that doesn't just answer "what does this document say," but tells you what was decided, whether everything still lines up, and what's worth worrying about.
 
 ---
 
-# 💡 What Think9 Brain Does
+## The Problem & Opportunity
 
-### 🔎 1. Remember
+Every fast-growing multi-brand company ends up with the same mess: SOPs, contracts, policies, meeting notes, and vendor agreements scattered across brands, each written and updated independently. Individually, every document is retrievable. Nobody's memory has actually failed. But collectively, nobody can answer "does everything still agree with itself" — because nothing is checking.
 
-Retrieve decisions, policies and organizational context from across the knowledge base.
+This shows up as two distinct, expensive failures:
 
-### 🧩 2. Reason
+**Fragmented memory.** Someone asks "what did we decide about this?" and the honest answer is buried in an old meeting note, a superseded policy doc, or a person who's since left the team.
 
-Cross-reference brand-level information against group-level policies and related sources.
+**Silent contradictions.** A group policy might set a 15-day return window while a brand policy says 7. Both documents exist, both are searchable, and standard keyword or semantic search will happily return both without ever telling you they conflict. Nobody finds out until a customer complaint or an audit forces the question.
 
-### 🚨 3. Monitor
-
-Scan the **entire corpus proactively**, even when nobody asks a question.
-
-### 🧑‍⚖️ 4. Escalate
-
-High-risk or uncertain findings are sent to a human reviewer instead of being silently accepted.
+This is exactly the kind of problem that needs an agentic system rather than a smarter search bar. Finding a contradiction between two policies requires reading both, understanding which one has organizational authority, and deciding whether the gap is a real conflict or a legitimate exception — that's reasoning, not retrieval, and it has to run continuously across a whole corpus, not just when someone happens to ask the right question.
 
 ---
 
-# 🏗️ Architecture
+## System Architecture & Workflow
+
+Think9 Brain is built as a small pipeline of cooperating agents rather than one large model doing everything at once. Documents come in, get indexed, and are then available to two kinds of consumers: an employee asking a direct question, and a scheduled proactive scan that checks the whole corpus for contradictions nobody asked about.
 
 ```mermaid
 flowchart LR
 
     A["📚 Organizational Knowledge
     SOPs · Contracts · Policies · Notes"]
-    
+
     A --> B["⚙️ Ingestion Agent"]
     B --> C[("🧠 Knowledge Index")]
 
@@ -119,339 +56,111 @@ flowchart LR
     J -->|Dismiss| L["📝 Logged"]
 ```
 
----
+| Agent | Role |
+|---|---|
+| Ingestion | Parses, chunks, and tags incoming documents |
+| Retrieval | Pulls the relevant institutional knowledge for a query |
+| Verification | Cross-checks policies against each other and flags conflicts |
+| Synthesis | Turns retrieved + verified content into a grounded, source-aware answer |
+| Proactive Scanner | Runs the same verification logic across the entire corpus, unprompted |
+| Human Review | Sits between "flagged" and "confirmed" — nothing high-risk gets accepted silently |
 
-# 🤖 Multi-Agent Brain
+The part that matters most here is that verification isn't just similarity matching. The system is authority-aware: it understands that a Group Policy outranks a Master Agreement, which outranks a Brand Policy, which outranks an Operational Exception. So instead of asking "are these two texts similar," it asks "do these actually agree, and if not, which one should win?" That distinction is what turns this from a search tool into something closer to a compliance layer.
 
-| Agent                    | What it does                                         |
-| ------------------------ | ---------------------------------------------------- |
-| ⚙️ **Ingestion**         | Parses, chunks and tags organizational documents     |
-| 🔎 **Retrieval**         | Finds relevant institutional knowledge               |
-| 🧩 **Verification**      | Cross-checks policies and detects conflicts          |
-| ✍️ **Synthesis**         | Produces grounded, source-aware answers              |
-| 🚨 **Proactive Scanner** | Searches the entire corpus for hidden contradictions |
-| 🧑‍⚖️ **Human Review**   | Approves or dismisses high-impact findings           |
-
-### Authority-aware reasoning
-
-The system understands that:
-
-```text
-Group Policy
-      ↓
-Master Agreement
-      ↓
-Brand Policy
-      ↓
-Operational Exception
-```
-
-So it doesn't simply ask:
-
-> *"Are these texts similar?"*
-
-It asks:
-
-> **"Do these policies agree, and which one has higher organizational authority?"**
+Anything the verification agent isn't confident about — high-severity conflicts, ambiguous authority relationships — gets routed to a human reviewer instead of being resolved automatically. That checkpoint is deliberate: the system's job is to surface risk fast, not to make the final call on it.
 
 ---
 
-# 🔥 The POC "Wow" Moment
+## Proof of Concept / Prototype
 
-The prototype contains **10 mock organizational documents** with intentionally seeded conflicts.
+The working prototype ingests 10 mock organizational documents with intentionally seeded conflicts, and answers questions against them through a FastAPI backend with a simple web front end.
 
-### Example
+Two examples from the seeded data:
 
-```text
-GROUP POLICY
-Return window → 15 days
-        │
-        │  ⚠️ CONFLICT
-        ↓
-BRAND B
-Return window → 7 days
+```
+GROUP POLICY: Return window → 15 days
+BRAND B:      Return window → 7 days     ⚠️ CONFLICT
+
+GROUP PROCUREMENT: Payment terms → Net-30
+BRAND C:            Payment terms → Net-45   ⚠️ CONFLICT
 ```
 
-Another:
+The moment that actually demonstrates the idea is the full-corpus scan. Instead of an employee having to ask six separate questions to stumble onto six separate problems, one scan surfaces all of them at once:
 
-```text
-GROUP PROCUREMENT
-Payment terms → Net-30
-        │
-        │  ⚠️ CONFLICT
-        ↓
-BRAND C
-Payment terms → Net-45
+```
+PROACTIVE SCAN
+────────────────────────────
+Documents scanned        10
+Contradictions found      6
+High severity             2
+Medium severity           4
 ```
 
-### Full-Corpus Scan
+*Results are from the included synthetic POC dataset and aren't production accuracy benchmarks — the point of this run is to show the mechanism works, not to claim a precision number.*
 
-Instead of asking six different questions:
-
-> **Scan Entire Corpus → 10 documents → 6 contradictions discovered**
-
-```text
-┌─────────────────────────────┐
-│     PROACTIVE SCAN 🧠       │
-├─────────────────────────────┤
-│ Documents scanned       10  │
-│ Contradictions found     6  │
-│ High severity            2  │
-│ Medium severity          4  │
-└─────────────────────────────┘
+**Try it yourself:**
 ```
-
-> **The system found problems before anyone asked about them.**
-
-*Results are from the included synthetic POC dataset and are not production accuracy benchmarks.*
-
----
-
-# 🛠️ Built With
-
-| Layer                     | Technology                                     |
-| ------------------------- | ---------------------------------------------- |
-| **Backend**               | FastAPI                                        |
-| **RAG / Retrieval**       | Python + TF-IDF                                |
-| **Index**                 | Local vector/index layer                       |
-| **LLM**                   | Claude API *(optional)*                        |
-| **Frontend**              | HTML + CSS + JavaScript                        |
-| **Production Direction**  | LangGraph + pgvector + modern embedding models |
-| **Integration Direction** | Slack · Email · MCP                            |
-
-The POC is intentionally lightweight and runs locally without requiring a complex cloud stack.
-
----
-
-# 📁 Project Structure
-
-```text
-think9-brain-poc/
-│
-├── 📂 data/                 # Organizational knowledge corpus
-├── 📂 static/
-│   └── index.html           # Chat + proactive dashboard
-│
-├── ⚙️ app.py                # FastAPI application
-├── 🧠 rag.py                # Retrieval + reasoning engine
-├── 📥 ingest.py             # Document ingestion pipeline
-├── 📦 requirements.txt
-├── 🗃️ index.pkl             # Generated knowledge index
-└── 📖 README.md
-```
-
----
-
-# 🚀 Run Locally
-
-### Requirements
-
-* Python **3.10+**
-* Git
-* Windows, macOS, or Linux
-
-### 1. Clone
-
-```bash
 git clone https://github.com/AatifaRizvi/think9-brain-poc.git
 cd think9-brain-poc
-```
-
-### 2. Create environment
-
-**Windows**
-
-```powershell
-python -m venv .venv
-.venv\Scripts\activate
-```
-
-**macOS / Linux**
-
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-```
-
-### 3. Install
-
-```bash
+python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
-```
-
-### 4. Build the index
-
-```bash
 python ingest.py
-```
-
-### 5. Start Brain
-
-```bash
 uvicorn app:app --reload --port 8000
 ```
+Then open `http://localhost:8000`, ask something like *"What is BrandB's return policy and is it compliant?"*, and hit **Scan Entire Corpus** to watch it find conflicts nobody pointed it toward.
 
-Open:
+**API surface:**
 
-**http://localhost:8000**
+| Endpoint | Purpose |
+|---|---|
+| `GET /` | Web application |
+| `POST /query` | RAG + verification |
+| `GET /scan-all` | Proactive corpus scan |
+| `POST /flag-review` | Human review |
 
----
-
-# 🎬 Try It
-
-### Ask the Brain
-
-```text
-What is BrandB's return policy and is it compliant?
-```
-
-or
-
-```text
-What are BrandC's vendor payment terms?
-```
-
-### Then trigger the wow moment:
-
-> **🚨 Scan Entire Corpus**
-
-Watch Think9 Brain discover contradictions **without being told what to look for.**
+The backend is API-first on purpose — the current HTML/JS front end could be swapped for React, Slack, or an internal tool without touching the reasoning layer underneath.
 
 ---
 
-# 🔌 API
+## Implementation Plan
 
-| Endpoint            | Purpose               |
-| ------------------- | --------------------- |
-| `GET /`             | Web application       |
-| `POST /query`       | RAG + verification    |
-| `GET /scan-all`     | Proactive corpus scan |
-| `POST /flag-review` | Human review          |
+**Tech stack today (POC):**
 
-The backend is API-first, allowing the UI to be replaced with React, Slack, or another enterprise interface without changing the reasoning layer.
+| Layer | Technology |
+|---|---|
+| Backend | FastAPI |
+| Retrieval | Python + TF-IDF |
+| Index | Local vector/index layer |
+| LLM | Claude API (optional) |
+| Frontend | HTML + CSS + JavaScript |
 
----
+**Where it goes for production:** LangGraph for the multi-agent orchestration, pgvector-backed PostgreSQL for the index, modern embedding models in place of TF-IDF, and native integrations into Slack, email, and MCP so the Brain lives where decisions already get made — not in a separate tab.
 
-# 🗺️ From POC → Production
+**30-day path to an MVP at Think9:**
 
-### Current POC
+| Week | Focus |
+|---|---|
+| 1 | Connect 2–3 pilot brands and pull in real knowledge sources |
+| 2 | Production-grade ingestion, embeddings, pgvector migration |
+| 3 | Harden the contradiction engine and build out the reviewer workflow |
+| 4 | Pilot deployment, evaluation, and tuning against real usage |
 
-```text
-Local Documents
-      ↓
-Lightweight Retrieval
-      ↓
-Contradiction Engine
-      ↓
-Web Dashboard
-```
-
-### Production Vision
-
-```text
-Drive · Slack · Email · CRM · Internal Systems
-                    ↓
-            Secure Ingestion
-                    ↓
-        Metadata + Versioning + ACL
-                    ↓
-         PostgreSQL + pgvector
-                    ↓
-       Multi-Agent Reasoning Layer
-                    ↓
-       ┌────────────┼────────────┐
-       ↓            ↓            ↓
-    Answers      Alerts       What-if
-       │            │         Simulation
-       └────────────┼────────────┘
-                    ↓
-             Human Governance
-```
-
-### 30-Day MVP Path
-
-| Week   | Focus                                             |
-| ------ | ------------------------------------------------- |
-| **01** | Connect 2–3 pilot brands + real knowledge sources |
-| **02** | Production ingestion + embeddings + pgvector      |
-| **03** | Contradiction engine + reviewer workflow          |
-| **04** | Pilot deployment + evaluation + tuning            |
+Production readiness would also mean layering in role-based access control, brand-level data isolation, document versioning, full audit trails, PII/sensitive-data handling, reviewer permissions, and ongoing model + system monitoring — none of which the POC needs to prove the core idea, but all of which are necessary before this touches real organizational data.
 
 ---
 
-# 🔮 What's Next?
+## Differentiators & Future Trajectories
 
-### ⏳ Temporal Drift
+**What makes this different from "just RAG":** most internal knowledge tools stop at retrieval — they'll hand you the right paragraph and call it done. Think9 Brain treats retrieval as the easy 80% and puts its actual effort into the harder 20%: reconciling documents against each other, weighing organizational authority, and deciding what's worth a human's attention. It's also proactive rather than purely reactive — it doesn't wait for someone to ask the right question, it goes looking for contradictions on a schedule.
 
-Detect policies that were marked **temporary** but were never revisited.
+**Where we'd take it next:**
 
-### 🔮 What-If Simulation
+- **Temporal drift detection** — catching policies that were explicitly marked "temporary" or "under review" and were then quietly never revisited, which is often where real risk hides.
+- **What-if simulation** — letting someone ask "what happens if Brand E moves to a 10-day return window?" and getting the downstream conflicts back *before* the policy ships, not after.
+- **Deeper enterprise integration** — meeting decisions where they already happen, in Slack, email, Google Drive, Microsoft 365, and via MCP, instead of asking people to come to a separate dashboard.
 
-> *"What happens if BrandE changes its return policy to 10 days?"*
-
-Identify conflicts **before** a new policy goes live.
-
-### 🔗 Enterprise Integrations
-
-Bring the Brain into the tools where decisions already happen:
-
-**Slack · Email · Google Drive · Microsoft 365 · MCP**
+The bigger bet behind all of this: an organization's knowledge base shouldn't just be searchable, it should be able to notice when it disagrees with itself. That's the shift from search to something closer to ongoing institutional reasoning — remember what was decided, catch it when things stop agreeing, and get the right person the alert before it becomes a real problem.
 
 ---
 
-# 🔐 Production Readiness Direction
-
-The prototype intentionally focuses on the reasoning workflow.
-
-A production deployment would add:
-
-* 🔒 Role-based access control
-* 🏢 Brand-level data isolation
-* 📜 Document versioning
-* 🔍 Full audit trails
-* 🛡️ PII / sensitive-data controls
-* 👥 Reviewer permissions
-* 📈 Observability & evaluation
-* 🤖 Model monitoring
-
----
-
-# 🧠 The Bigger Vision
-
-Think9 Brain is not another document chatbot.
-
-It is a step toward an **organizational memory layer** that continuously understands:
-
-```text
-What did we decide?
-        ↓
-Why did we decide it?
-        ↓
-Is the decision still valid?
-        ↓
-Does anything else contradict it?
-        ↓
-Who needs to know?
-```
-
-> ### **From searching organizational knowledge → to continuously reasoning across it.**
-
-**Remember decisions. Detect contradictions. Accelerate the next decision.**
-
----
-
-## 🎥 Demo
-
-**Demo Video:** *Add link before submission*
-
-Recommended flow:
-
-**Ask → Retrieve → Verify → Detect → Scan Entire Corpus → Review**
-
----
-
-### 🏆 Think9 AI & Intelligence Challenge
-
-**Track 3 — Decision Velocity & Institutional Memory**
-
-**Think9 Brain · Institutional Memory + Proactive Decision Intelligence**
+**Think9 AI & Intelligence Challenge · Track 3 — Decision Velocity & Institutional Memory**
