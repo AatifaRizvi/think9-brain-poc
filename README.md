@@ -1,199 +1,927 @@
-# Think9 Brain
+# 🧠 Think9 Brain
 
-**A centralized institutional-memory and decision-velocity agent for 30+ brands.**
+### Institutional Memory & Decision Intelligence for Multi-Brand Organizations
 
-Submitted for the Think9 AI & Intelligence Challenge — Track 3 (Decision Velocity & Institutional Memory).
+> **Think9 Brain turns fragmented organizational knowledge into an active decision-support system — retrieving institutional knowledge, verifying policies across organizational levels, and proactively surfacing contradictions before they become business risks.**
 
-Think9 Brain is a multi-agent RAG system that doesn't just answer questions from
-internal documents — it continuously cross-references brand-level policies against
-group-level policy and flags contradictions before they become legal, financial,
-or brand-trust risks, with a human reviewer in the loop for anything high-stakes.
+**Think9 AI & Intelligence Challenge · Track 3 — Decision Velocity & Institutional Memory**
 
 ---
 
-## Table of Contents
+## Overview
 
-1. [The Problem & Opportunity](#1-the-problem--opportunity)
-2. [System Architecture & Workflow](#2-system-architecture--workflow)
-3. [Proof of Concept](#3-proof-of-concept)
-4. [Implementation Plan](#4-implementation-plan)
-5. [Quick Start](#quick-start)
-6. [Repository Structure](#repository-structure)
-7. [Differentiators / What's Next](#differentiators--whats-next)
+As organizations scale across multiple brands, teams, documents, and operating units, critical knowledge becomes increasingly fragmented.
 
----
+A policy may exist in a brand SOP.
+A different rule may exist in a group-level agreement.
+A decision may only exist inside meeting notes.
+And the person who remembers why that decision was made may no longer be available.
 
-## 1. The Problem & Opportunity
+Traditional search and document chat systems solve only part of the problem:
 
-As Think9 scales past 30 brands, the knowledge that drives daily execution —
-meeting notes, legal playbooks, vendor agreements, brand SOPs, and past decisions —
-lives scattered across drives, chat threads, and individual memory. Two failure
-modes compound as brand count grows:
+> **They retrieve information when someone asks. They don't continuously reason across the information that already exists.**
 
-- **Fragmentation** — new team members, and even founders, re-litigate decisions
-  that were already made, because there's no single place to ask *"what did we
-  decide about X, and why?"*
-- **Silent contradictions** — one brand's vendor contract, pricing policy, or
-  return policy can quietly conflict with a master agreement or with another
-  brand's terms, and nobody notices until it becomes a legal or financial problem.
+**Think9 Brain** is a multi-agent RAG-based decision intelligence prototype designed to address this gap.
 
-Search tools and static wikis only solve retrieval — they don't reason across
-documents, don't detect when two sources disagree, and don't get more valuable
-as the corpus grows. A generic chatbot answers questions but doesn't flag risk.
+It combines:
 
-**The opportunity:** a system that does three things a keyword search can't —
-continuously ingest institutional knowledge across brands, cross-reference new
-information against everything that came before to catch contradictions early,
-and route only the genuinely uncertain or high-stakes cases to a human — so
-decision velocity increases without sacrificing accuracy or compliance.
+* 🔎 **Institutional-memory retrieval**
+* 🧩 **Cross-document contradiction detection**
+* 🚨 **Proactive corpus-wide monitoring**
+* 🧑‍⚖️ **Human-in-the-loop verification**
+* 📚 **Source-aware answers**
+* 🏢 **Brand-level and group-level policy reasoning**
+
+The result is a system designed to help teams **find what was decided, understand why it was decided, detect when policies disagree, and escalate uncertain or high-impact cases to humans.**
 
 ---
 
-## 2. System Architecture & Workflow
+# 1. The Problem
+
+## Organizational knowledge becomes fragmented as companies scale
+
+For a multi-brand organization, institutional knowledge can live across:
+
+* Brand SOPs
+* Legal agreements
+* Vendor contracts
+* Procurement policies
+* Meeting notes
+* HR documents
+* Pricing policies
+* Historical decisions
+* Internal communications
+
+This creates two major failure modes.
+
+### 1.1 Fragmented institutional memory
+
+Teams repeatedly ask questions such as:
+
+> *"What did we decide about this?"*
+
+> *"Which policy is currently applicable?"*
+
+> *"Why was this exception approved?"*
+
+Without a centralized reasoning layer, employees may have to search multiple systems or rely on individual memory.
+
+This slows decision-making and increases the probability of inconsistent execution.
+
+---
+
+### 1.2 Silent policy contradictions
+
+A brand-level policy can unintentionally diverge from a group-level requirement.
+
+For example:
+
+```text
+Group Policy
+     │
+     ├── Minimum return window: 15 days
+     │
+     ▼
+Brand Policy
+     │
+     └── Return window: 7 days
+```
+
+Neither document is necessarily difficult to retrieve.
+
+The real problem is recognizing that:
+
+> **These two pieces of information disagree.**
+
+That requires cross-document reasoning rather than simple retrieval.
+
+---
+
+# 2. The Opportunity
+
+Think9 Brain is designed around a simple principle:
+
+> **The value of organizational knowledge increases when the system can reason across it — not merely search it.**
+
+The system therefore operates in two modes:
+
+### Reactive Intelligence
+
+An employee asks a question.
+
+```text
+Question
+   ↓
+Retrieve relevant knowledge
+   ↓
+Verify against related policies
+   ↓
+Detect contradictions
+   ↓
+Generate sourced answer
+```
+
+### Proactive Intelligence
+
+Nobody asks a question.
+
+```text
+Entire Knowledge Corpus
+        ↓
+Cross-document analysis
+        ↓
+Contradiction detection
+        ↓
+Severity + confidence scoring
+        ↓
+Human review
+        ↓
+Verified institutional knowledge
+```
+
+This second capability is the key differentiator of the prototype.
+
+---
+
+# 3. System Architecture
 
 ```mermaid
 flowchart TD
-    A[Documents: SOPs, contracts,<br/>meeting notes, master policies] --> B[Ingestion Agent]
-    B -->|chunk + tag metadata<br/>brand, doc type, authority level| C[(Vector Index)]
 
-    Q[Employee Query] --> D[Retrieval Agent]
-    C --> D
-    D -->|hybrid + temporal-aware search| E[Contradiction /<br/>Verification Agent]
-    E -->|confidence + severity score| F[Synthesis Agent]
-    F --> G[Answer + Sources +<br/>Contradiction Flags]
+    A["Enterprise Knowledge Sources<br/>SOPs · Contracts · Policies · Meeting Notes"] 
+        --> B["Ingestion Agent"]
 
-    C -.->|scheduled / on new doc| H[Proactive Scan Agent]
-    H --> E
+    B --> C["Document Processing<br/>Chunking · Metadata · Authority"]
 
-    E -->|high severity /<br/>low confidence| I{Human-in-the-Loop<br/>Review}
-    I -->|approve| J[Marked Verified]
-    I -->|dismiss| K[Logged, Deprioritized]
+    C --> D[("Knowledge / Vector Index")]
 
-    G --> L[Chat UI]
-    H --> M[Contradiction Dashboard]
+    U["Employee Query"] --> E["Retrieval Agent"]
+
+    D --> E
+
+    E --> F["Contradiction & Verification Agent"]
+
+    F --> G["Confidence + Severity Scoring"]
+
+    G --> H["Synthesis Agent"]
+
+    H --> I["Answer + Sources + Risk Flags"]
+
+    I --> J["Employee / Chat UI"]
+
+    D -. "Scheduled / New Document" .-> K["Proactive Scan Agent"]
+
+    K --> F
+
+    F --> L{"Human Review Required?"}
+
+    L -->|Yes| M["Human-in-the-Loop Dashboard"]
+
+    M -->|Approve| N["Verified Finding"]
+
+    M -->|Dismiss| O["Dismissed / Logged Finding"]
+
+    N --> P["Review Feedback"]
+
+    O --> P
+
+    P -. "Future Ranking / Threshold Tuning" .-> E
 ```
 
-**Agents:**
+---
 
-| Agent | Responsibility |
-|---|---|
-| **Ingestion** | Parses documents (SOPs, contracts, meeting notes, master policies), chunks them, and tags each chunk with metadata — brand, document type, date, and **authority level** (`group_policy` vs `brand_level`). |
-| **Retrieval** | On a query, runs similarity search over the vector index with temporal-aware ranking, so the most recent, authoritative version of a policy surfaces first. |
-| **Contradiction / Verification** | Cross-checks retrieved content for conflicts — e.g. a brand's return window undercutting the group's minimum — and assigns each flag a **confidence** and **severity** score. |
-| **Synthesis** | Generates a plain-language, source-cited answer and surfaces any contradiction inline instead of silently picking one version. |
-| **Proactive Scan** | Runs the same contradiction logic across the *entire* corpus, independent of any query — this is what makes the system a continuously-monitoring "Brain" rather than a reactive Q&A bot. Designed to run nightly or on every new document ingested. |
-| **Human-in-the-Loop** | Any high-severity contradiction or low-confidence answer is routed to a reviewer for approve/dismiss; the decision feeds back into future retrieval ranking. |
+# 4. Agent Architecture
 
-An optional **MCP layer** (document-source, verification, notification servers)
-lets the same Brain be reached from Slack or email without a new integration
-per brand.
+| Agent                                  | Responsibility                                                                                                      |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| **Ingestion Agent**                    | Processes documents, creates chunks, and attaches metadata such as brand, document type, date, and authority level. |
+| **Retrieval Agent**                    | Finds relevant institutional knowledge for employee questions using the indexed corpus.                             |
+| **Contradiction / Verification Agent** | Cross-references related sources and identifies conflicting policies, values, or statements.                        |
+| **Synthesis Agent**                    | Converts retrieved and verified information into a concise, source-aware response.                                  |
+| **Proactive Scan Agent**               | Runs contradiction detection across the complete corpus without requiring an employee query.                        |
+| **Human-in-the-Loop Agent**            | Routes high-severity or low-confidence findings to a reviewer for approval or dismissal.                            |
+
+### Authority-aware reasoning
+
+The prototype distinguishes between different levels of organizational authority:
+
+```text
+Group Policy
+     ↓
+Master Agreement
+     ↓
+Brand Policy
+     ↓
+Operational Exception
+```
+
+This allows contradiction detection to become more meaningful than simple text similarity.
+
+A conflict between two equally authoritative documents is different from a brand-level policy conflicting with a group-level requirement.
 
 ---
 
-## 3. Proof of Concept
+# 5. Core Workflow
 
-This repo is a working, runnable prototype — not just a diagram.
+## 5.1 Document ingestion
 
-- **Data:** `data/` contains 10 mock Think9-style documents — brand policies for
-  BrandA–D, two group-level policies (Master Franchise Agreement, Master
-  Procurement Policy), meeting notes, and an HR doc. **Two real contradictions
-  are seeded in** so the system's detection can be verified end-to-end:
-  - BrandB's 7-day return window vs. the group's 15-day minimum (Section 4.2)
-  - BrandC's Net-45 vendor payment terms vs. the group's Net-30 policy
-- **Retrieval + Q&A:** ask a natural-language question, get a sourced answer.
-- **Contradiction detection:** numeric policy comparison (day-counts, payment
-  terms) across brand-level vs. group-level documents, with confidence +
-  severity scoring — not a keyword match, an actual structured comparison.
-- **Proactive scan:** a full-corpus scan (no query needed) surfaces *every*
-  contradiction in the corpus at once — in testing this found 6 conflicts
-  (2 high, 4 medium) vs. 2 found through reactive querying alone.
-- **Human-in-the-loop:** every flagged contradiction can be approved or
-  dismissed from the UI, simulating a reviewer's decision.
+Documents are processed into searchable knowledge units.
 
-> Demo video: **[add link here before submitting]**
-> Live/local demo: run locally with the Quick Start below.
+```text
+Document
+   ↓
+Parsing
+   ↓
+Chunking
+   ↓
+Metadata extraction
+   ↓
+Embedding / indexing
+```
 
----
+Metadata includes:
 
-## 4. Implementation Plan
-
-### Tech Stack
-
-| Layer | Technology | Notes |
-|---|---|---|
-| Orchestration | LangGraph-style multi-agent flow (ingestion → retrieval → verification → synthesis, conditional routing) | This POC implements the same agent boundaries directly in Python for zero-dependency portability |
-| Embeddings / Retrieval | TF-IDF (scikit-learn) in this POC | Swap for multilingual sentence-transformers + a proper ANN index at scale — retrieval interface is unchanged |
-| Vector store / DB | Local pickle index in this POC | Production: Supabase (Postgres + pgvector) with row-level security per brand/department |
-| Backend | FastAPI | `/query`, `/scan-all`, `/flag-review` |
-| Generation | Claude API (optional) | Falls back to a deterministic template with zero API keys, so the POC runs anywhere |
-| Frontend | Single-file HTML/JS in this POC | Production: React + Vite + Tailwind |
-| Extensibility | — | MCP servers (document-source, verification, notification) for Slack/email access without rebuilding integrations per brand |
-
-### 30-Day Roadmap to MVP
-
-| Week | Focus | Key Deliverable |
-|---|---|---|
-| **Week 1** | Requirements & data audit: select 2–3 pilot brands, collect real meeting notes, SOPs, legal playbooks, vendor contracts; define metadata taxonomy. | Pilot data corpus + schema |
-| **Week 2** | Build production ingestion pipeline (multilingual embeddings, metadata tagging); stand up Supabase/pgvector; ship retrieval + Q&A on pilot corpus. | Working RAG Q&A for pilot brands |
-| **Week 3** | Harden the contradiction/verification agent; build the reviewer dashboard for HITL approval; wire the proactive nightly scan; feed reviewer decisions back into ranking. | Contradiction detection + dashboard live |
-| **Week 4** | Pilot rollout to real employees in 2–3 brands; collect usage feedback; tune thresholds; scope MCP-based Slack/email access; draft rollout plan for remaining brands. | Pilot in production + scale-up plan |
-
-By day 30, Think9 Brain answers real queries and proactively surfaces real
-contradictions for 2–3 pilot brands, with a data-informed plan to extend to
-the remaining 27+.
+```text
+brand
+document_type
+document_date
+authority_level
+source
+```
 
 ---
 
-## Quick Start
+## 5.2 Query-time reasoning
+
+For a query such as:
+
+> **"What is BrandB's return policy and is it compliant?"**
+
+Think9 Brain:
+
+1. Retrieves BrandB's policy.
+2. Identifies the relevant group-level policy.
+3. Compares the two.
+4. Calculates confidence and severity.
+5. Returns the answer with the relevant contradiction.
+
+This avoids the common failure mode of simply returning the first matching document.
+
+---
+
+## 5.3 Proactive contradiction scanning
+
+The `/scan-all` workflow does not require an employee query.
+
+Instead:
+
+```text
+All indexed documents
+        ↓
+Generate relevant document relationships
+        ↓
+Compare policy constraints
+        ↓
+Identify conflicts
+        ↓
+Assign severity
+        ↓
+Surface findings
+```
+
+This transforms the system from:
+
+> **"Ask the chatbot when something goes wrong."**
+
+into:
+
+> **"Let the system continuously look for things that could go wrong."**
+
+---
+
+# 6. Proof of Concept
+
+This repository contains a **fully runnable prototype** demonstrating the core workflow.
+
+## Dataset
+
+The included `data/` directory contains **10 mock Think9-style documents**, representing:
+
+* Brand-level policies
+* Group-level policies
+* Master agreements
+* Procurement rules
+* Meeting notes
+* HR documentation
+
+The dataset intentionally contains seeded conflicts to validate the detection pipeline.
+
+### Seeded contradictions
+
+#### Example 1 — Return Policy
+
+```text
+Group minimum:
+15 days
+
+BrandB:
+7 days
+```
+
+The system identifies the mismatch and evaluates its severity.
+
+#### Example 2 — Vendor Payment Terms
+
+```text
+Group policy:
+Net-30
+
+BrandC:
+Net-45
+```
+
+The system detects the deviation between the brand-level and group-level policies.
+
+---
+
+## Prototype capabilities
+
+| Capability                 | Status        |
+| -------------------------- | ------------- |
+| Document ingestion         | ✅ Implemented |
+| Metadata tagging           | ✅ Implemented |
+| Retrieval                  | ✅ Implemented |
+| Source-aware Q&A           | ✅ Implemented |
+| Numeric policy comparison  | ✅ Implemented |
+| Contradiction detection    | ✅ Implemented |
+| Confidence scoring         | ✅ Implemented |
+| Severity scoring           | ✅ Implemented |
+| Full-corpus proactive scan | ✅ Implemented |
+| Human review workflow      | ✅ Implemented |
+| Temporal drift detection   | 🔜 Planned    |
+| What-if policy simulation  | 🔜 Planned    |
+| Production vector database | 🔜 Planned    |
+| Slack / email integration  | 🔜 Planned    |
+
+---
+
+# 7. Proactive Scan Results
+
+During prototype testing, the full-corpus scan surfaced:
+
+```text
+Documents scanned      : 10
+Contradictions found   : 6
+High severity          : 2
+Medium severity        : 4
+```
+
+The important distinction is that the proactive scan found conflicts **without requiring a user to formulate a query for each one**.
+
+> **These numbers are prototype evaluation results on the included mock corpus, not production accuracy benchmarks.**
+
+---
+
+# 8. Human-in-the-Loop
+
+AI should not silently make high-impact organizational decisions.
+
+Think9 Brain therefore treats contradiction detection as a **decision-support workflow**.
+
+```text
+Potential Contradiction
+        ↓
+Confidence + Severity
+        ↓
+   ┌────┴────┐
+   ↓         ↓
+Low Risk   High Risk
+   ↓         ↓
+Automatic   Human Review
+Handling       ↓
+          ┌────┴────┐
+          ↓         ↓
+       Approve    Dismiss
+          ↓         ↓
+       Verified   Logged
+```
+
+This provides a controlled path for:
+
+* Legal-sensitive conflicts
+* Financial policy mismatches
+* Low-confidence detections
+* Ambiguous exceptions
+* High-impact organizational decisions
+
+---
+
+# 9. Technology Stack
+
+| Layer                   | Prototype               | Production Direction                      |
+| ----------------------- | ----------------------- | ----------------------------------------- |
+| **Backend**             | FastAPI                 | FastAPI / scalable service layer          |
+| **Orchestration**       | Python agent boundaries | LangGraph-style orchestration             |
+| **Retrieval**           | TF-IDF / local index    | Sentence Transformers + ANN retrieval     |
+| **Vector Storage**      | Local pickle index      | PostgreSQL + pgvector / managed vector DB |
+| **Generation**          | Optional Claude API     | Production LLM with structured outputs    |
+| **Frontend**            | HTML / CSS / JavaScript | React + Vite + Tailwind                   |
+| **Document Processing** | Python                  | Production document ingestion pipeline    |
+| **Human Review**        | Prototype dashboard     | Role-based review workflow                |
+| **Integration**         | Local API               | Slack / Email / MCP-based interfaces      |
+
+### Design principle
+
+The prototype intentionally uses lightweight components so that it can run locally with minimal infrastructure.
+
+The architecture keeps the major interfaces modular so retrieval, storage, generation, and orchestration can be upgraded independently.
+
+---
+
+# 10. API Surface
+
+The prototype exposes the following core backend operations:
+
+| Endpoint            | Purpose                                             |
+| ------------------- | --------------------------------------------------- |
+| `GET /`             | Serves the web application                          |
+| `POST /query`       | Runs retrieval, verification, and answer synthesis  |
+| `GET /scan-all`     | Performs a proactive full-corpus contradiction scan |
+| `POST /flag-review` | Records a human review decision                     |
+
+The API layer allows the frontend to remain decoupled from the underlying reasoning components.
+
+---
+
+# 11. Project Structure
+
+```text
+think9-brain-poc/
+│
+├── 📁 data/
+│   ├── brand_a_policy.*
+│   ├── brand_b_policy.*
+│   ├── brand_c_policy.*
+│   ├── brand_d_policy.*
+│   ├── master_franchise_agreement.*
+│   ├── master_procurement_policy.*
+│   ├── meeting_notes.*
+│   ├── hr_policy.*
+│   └── ...
+│
+├── 📁 static/
+│   └── index.html
+│
+├── 📄 app.py
+│   └── FastAPI application and API endpoints
+│
+├── 📄 rag.py
+│   └── Retrieval, verification, contradiction detection,
+│       synthesis, and proactive scanning logic
+│
+├── 📄 ingest.py
+│   └── Document ingestion, chunking, metadata processing,
+│       and index generation
+│
+├── 📄 requirements.txt
+│   └── Python dependencies
+│
+├── 📄 README.md
+│   └── Project documentation
+│
+└── 📄 index.pkl
+    └── Generated local retrieval index
+```
+
+> `index.pkl` is a generated artifact and can be rebuilt from `data/` using the ingestion pipeline.
+
+---
+
+# 12. Quick Start
+
+## Prerequisites
+
+* Python 3.10+
+* pip
+* Git
+
+---
+
+## Installation
+
+Clone the repository:
+
+```bash
+git clone https://github.com/AatifaRizvi/think9-brain-poc.git
+cd think9-brain-poc
+```
+
+Create a virtual environment:
+
+### Windows
+
+```powershell
+python -m venv .venv
+.venv\Scripts\activate
+```
+
+### macOS / Linux
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+Install dependencies:
 
 ```bash
 pip install -r requirements.txt
-python ingest.py                        # builds index.pkl from data/
+```
+
+---
+
+## Build the knowledge index
+
+```bash
+python ingest.py
+```
+
+This processes the documents in `data/` and generates the local retrieval index.
+
+---
+
+## Start the application
+
+```bash
 uvicorn app:app --reload --port 8000
 ```
 
-Open `http://localhost:8000` and either:
-- Ask: *"What is BrandB's return policy and is it compliant?"*
-- Ask: *"What are BrandC's vendor payment terms?"*
-- Or click **"Scan entire corpus"** to see every contradiction in the corpus at once.
+Open:
 
-### Optional — real LLM-generated answers
-
-By default, answers use a deterministic template (zero API keys / zero network
-calls needed). For natural-language, cited answers via Claude:
-
-```bash
-export ANTHROPIC_API_KEY=sk-ant-...
+```text
+http://localhost:8000
 ```
 
 ---
 
-## Repository Structure
+# 13. Try the Demo
 
+### Query-based workflow
+
+Try:
+
+```text
+What is BrandB's return policy and is it compliant?
 ```
-think9poc/
-├── data/                    # 10 mock documents, 2 seeded contradictions
-├── ingest.py                # Ingestion agent — chunk, tag metadata, build index
-├── rag.py                   # Retrieval + Contradiction/Verification + Synthesis agents
-├── app.py                   # FastAPI backend — /query, /scan-all, /flag-review
-├── static/index.html        # Single-file frontend (chat + proactive dashboard)
-├── requirements.txt
-└── README.md
+
+Or:
+
+```text
+What are BrandC's vendor payment terms?
 ```
 
 ---
 
-## Differentiators / What's Next
+### Proactive workflow
 
-- **Proactive, not just reactive** — the `/scan-all` endpoint monitors the whole
-  corpus continuously rather than waiting to be asked, which is the actual
-  bottleneck Think9 described (*"market research is usually static, slow, and
-  reactive"* applies just as much to internal knowledge).
-- **Temporal drift detection (planned)** — the meeting-notes doc in this repo
-  already shows the pattern: a policy exception approved as "temporary" that
-  was *never reviewed for renewal*. A next iteration flags exceptions that have
-  silently gone stale, not just documents that actively conflict.
-- **What-if simulation (planned)** — before a brand finalizes a policy change,
-  query the Brain with a hypothetical ("if BrandE moves to a 10-day return
-  window, what does it conflict with?") to catch risk *before* it's written
-  down, not after.
+Click:
+
+> **Scan Entire Corpus**
+
+The system will analyze the available corpus and display detected contradictions along with their severity and confidence.
+
+### Recommended demo sequence
+
+```text
+1. Ask a policy question
+        ↓
+2. Show retrieved sources
+        ↓
+3. Show contradiction detection
+        ↓
+4. Open Proactive Scan
+        ↓
+5. Scan entire corpus
+        ↓
+6. Show contradiction dashboard
+        ↓
+7. Review / approve a finding
+```
+
+This demonstrates the difference between **reactive RAG** and **proactive institutional intelligence**.
+
+---
+
+# 14. Optional LLM Generation
+
+The prototype can operate without an external API key using deterministic answer generation.
+
+For LLM-powered natural-language synthesis, configure the appropriate API key as an environment variable:
+
+```powershell
+$env:ANTHROPIC_API_KEY="your_api_key"
+```
+
+Then restart the application.
+
+> Never commit API keys or `.env` files to GitHub.
+
+---
+
+# 15. 30-Day MVP Roadmap
+
+| Timeline   | Focus                               | Deliverable                                                     |
+| ---------- | ----------------------------------- | --------------------------------------------------------------- |
+| **Week 1** | Data audit + pilot selection        | 2–3 pilot brands, document taxonomy, access model               |
+| **Week 2** | Production ingestion + retrieval    | Multilingual embeddings, metadata pipeline, pgvector            |
+| **Week 3** | Verification + proactive monitoring | Contradiction engine, reviewer dashboard, scheduled scans       |
+| **Week 4** | Pilot deployment                    | Employee testing, threshold tuning, feedback loop, rollout plan |
+
+### Target MVP outcome
+
+By the end of the first 30 days:
+
+> **Think9 Brain should operate on real organizational knowledge for 2–3 pilot brands, continuously surface potential contradictions, and provide a measurable decision-support workflow for employees and reviewers.**
+
+---
+
+# 16. Production Architecture
+
+The POC is intentionally lightweight. A production deployment would evolve toward:
+
+```text
+                   ┌─────────────────────┐
+                   │ Enterprise Sources  │
+                   │ Drive / Email / CRM  │
+                   │ Slack / Documents    │
+                   └──────────┬──────────┘
+                              ↓
+                   ┌─────────────────────┐
+                   │ Ingestion Pipeline  │
+                   │ Parse + Chunk + ACL │
+                   │ Metadata + Versioning│
+                   └──────────┬──────────┘
+                              ↓
+              ┌──────────────────────────────┐
+              │     Knowledge Layer          │
+              │                              │
+              │ PostgreSQL + pgvector        │
+              │ Metadata + Permissions       │
+              │ Document Versions             │
+              └──────────────┬───────────────┘
+                             ↓
+                  ┌──────────────────────┐
+                  │ Reasoning Layer      │
+                  │                      │
+                  │ Retrieval             │
+                  │ Verification          │
+                  │ Contradiction Engine  │
+                  │ Synthesis             │
+                  └──────────┬───────────┘
+                             ↓
+              ┌────────────────────────────┐
+              │ Decision Intelligence      │
+              │                            │
+              │ Answers                    │
+              │ Risk Flags                 │
+              │ Proactive Alerts           │
+              └────────────┬───────────────┘
+                           ↓
+              ┌────────────────────────────┐
+              │ Human Review & Governance  │
+              │                            │
+              │ Approve / Dismiss / Audit  │
+              └────────────────────────────┘
+```
+
+---
+
+# 17. Security & Governance Considerations
+
+A production implementation must treat organizational knowledge as sensitive infrastructure.
+
+Key requirements include:
+
+* **Role-based access control**
+* **Brand-level data isolation**
+* **Document-level permissions**
+* **Source attribution**
+* **Audit logs**
+* **Document versioning**
+* **Reviewer accountability**
+* **PII and sensitive-data controls**
+* **Model-output monitoring**
+* **Human approval for high-impact decisions**
+
+The prototype does not claim to implement enterprise-grade security controls; these belong in the production implementation layer.
+
+---
+
+# 18. Differentiators
+
+### 01 — Proactive instead of purely reactive
+
+Traditional RAG:
+
+```text
+User → Question → Retrieval → Answer
+```
+
+Think9 Brain:
+
+```text
+Documents → Continuous Verification → Risk Detection
+```
+
+---
+
+### 02 — Cross-document reasoning
+
+The system does not treat every document as an isolated knowledge source.
+
+It explicitly compares:
+
+```text
+Group Policy
+      ↕
+Brand Policy
+      ↕
+Operational Exception
+      ↕
+Historical Decision
+```
+
+---
+
+### 03 — Risk-aware outputs
+
+Instead of returning only an answer:
+
+```text
+Answer
++
+Sources
++
+Contradiction
++
+Confidence
++
+Severity
+```
+
+This makes the output more useful for decision-making.
+
+---
+
+### 04 — Human-controlled intelligence
+
+The objective is not to replace organizational judgment.
+
+It is to:
+
+> **surface the right information and the right risks at the right time.**
+
+---
+
+# 19. What's Next
+
+## Temporal Drift Detection
+
+Organizations often create temporary exceptions that quietly become permanent.
+
+Future versions will detect:
+
+```text
+Temporary Exception
+        ↓
+Expiration / Review Date
+        ↓
+No Review
+        ↓
+Potential Policy Drift
+```
+
+This moves the system beyond contradiction detection toward **institutional memory maintenance**.
+
+---
+
+## What-If Policy Simulation
+
+Before publishing a policy change, users could ask:
+
+> *"If BrandE moves to a 10-day return window, what policies would this conflict with?"*
+
+The system would simulate the proposed change against the organizational knowledge graph and identify potential conflicts **before deployment**.
+
+---
+
+## Enterprise Integrations
+
+Potential interfaces include:
+
+* Slack
+* Email
+* Google Drive
+* Microsoft 365
+* Internal knowledge bases
+* MCP-based enterprise tools
+
+The goal is to make institutional intelligence available **where decisions already happen**.
+
+---
+
+# 20. Limitations of the Current POC
+
+This repository is a proof of concept and intentionally does not represent a production deployment.
+
+Current limitations include:
+
+* Mock / synthetic dataset
+* Lightweight local retrieval
+* No enterprise authentication
+* No production-grade access-control layer
+* No distributed vector database
+* Limited document formats
+* Prototype-level contradiction rules
+* No production monitoring infrastructure
+* No benchmark against a real enterprise corpus
+
+These limitations are deliberate and define the next engineering phase rather than hidden assumptions.
+
+---
+
+# 21. Success Metrics for Production
+
+A production rollout should be evaluated using measurable business and system metrics.
+
+### Retrieval
+
+* Retrieval precision / recall
+* Source attribution accuracy
+* Answer groundedness
+
+### Contradiction Detection
+
+* Precision of flagged contradictions
+* False-positive rate
+* False-negative rate
+* Reviewer acceptance rate
+
+### Decision Velocity
+
+* Time-to-answer
+* Time saved per employee
+* Reduction in repeated questions
+* Time from contradiction creation → detection
+
+### Governance
+
+* Percentage of high-risk findings reviewed
+* Audit completeness
+* Policy-version traceability
+
+The ultimate objective is not simply **more AI output**.
+
+It is:
+
+> **Faster, safer, and better-informed organizational decisions.**
+
+---
+
+# 22. Demo
+
+🎥 **Demo Video:** *Add link before submission*
+
+The recommended demo showcases:
+
+1. Natural-language institutional-memory query
+2. Source-aware response
+3. Contradiction identification
+4. Full-corpus proactive scan
+5. Severity and confidence scoring
+6. Human review workflow
+
+---
+
+# 23. Conclusion
+
+Think9 Brain is built around a shift in how organizations use internal knowledge:
+
+> **From searching documents → to reasoning across institutional memory.**
+
+The prototype demonstrates that an internal RAG system can evolve beyond question answering by continuously checking organizational knowledge for contradictions, surfacing potential risks, and involving humans where judgment matters.
+
+As Think9 scales across brands, the long-term vision is an institutional intelligence layer that helps teams:
+
+**Remember what was decided.
+Understand why it was decided.
+Detect when things stop agreeing.
+And make the next decision faster.**
+
+---
+
+## Built for the Think9 AI & Intelligence Challenge
+
+**Track 3 — Decision Velocity & Institutional Memory**
+
+**Think9 Brain · Institutional Memory + Proactive Decision Intelligence**
