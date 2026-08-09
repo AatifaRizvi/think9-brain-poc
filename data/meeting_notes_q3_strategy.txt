@@ -1,0 +1,8 @@
+Document Type: Meeting Notes
+Meeting: Q3 Portfolio Strategy Sync
+Date: 2026-07-15
+
+Decision: BrandB's shorter return window was approved as a temporary
+Q4 2025 fraud-mitigation measure but was never reviewed for renewal.
+Action item (unresolved): Legal to confirm whether BrandB's policy still
+requires an active waiver under Section 4.2.

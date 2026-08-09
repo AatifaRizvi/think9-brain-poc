@@ -1,0 +1,6 @@
+Document Type: HR Onboarding SOP
+Applies To: All Think9 portfolio brands
+Last Updated: 2026-01-05
+
+New hires complete a 3-day orientation covering brand portfolio overview,
+tools access (Slack, Notion, Supabase), and compliance training.

@@ -1,0 +1,6 @@
+Brand: BrandA (Skincare)
+Document Type: Vendor Payment Terms
+Last Updated: 2026-04-05
+
+BrandA pays raw material suppliers on Net 30 terms from invoice date, as
+per the group procurement standard.
