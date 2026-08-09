@@ -103,6 +103,17 @@ Medium severity           4
 
 *This is the seeded POC dataset, not a production accuracy number — it's here to show the mechanism works, not to make an accuracy claim.*
 
+**Running screenshots:**
+
+![Home screen](screenshots/01-home-screen.png)
+*Ask a direct question, or trigger a full-corpus scan with no question at all.*
+
+![Query answer with contradiction detection](screenshots/03-query-answer.png)
+*A direct query pulls the relevant documents, cites its sources, and flags the contradiction inline.*
+
+![Proactive scan results](screenshots/02-proactive-scan.png)
+*One click surfaces all 6 seeded contradictions, ranked by severity, each with an Approve/Dismiss action for the human reviewer.*
+
 **Run it locally:**
 ```bash
 git clone https://github.com/AatifaRizvi/think9-brain-poc.git
@@ -163,6 +174,8 @@ Most internal knowledge tools stop at retrieval — hand you the right paragraph
 - **Temporal drift** — flagging policies that were marked "temporary" and then quietly never revisited. That's usually where the real risk sits.
 - **What-if simulation** — *"what happens if Brand E moves to a 10-day return window?"* answered before the policy ships, not after.
 - **Deeper integration** — living in Slack, email, Drive, Microsoft 365, and MCP, so it's part of where decisions happen rather than a separate dashboard people have to remember to open.
+
+> This isn't just a roadmap idea — the live query screenshot above already surfaces it: BrandB's exception was "approved as a temporary Q4 fraud-mitigation measure" and flagged as never reviewed for renewal, with an open action item for Legal. The mechanism for temporal drift is already firing on the seeded data; formalizing it into its own scheduled check is the next step, not a new capability.
 
 The underlying bet is simple: a knowledge base shouldn't just be searchable, it should be able to tell when it disagrees with itself — and say so before someone else has to find out the hard way.
 
